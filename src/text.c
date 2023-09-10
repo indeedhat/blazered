@@ -5,6 +5,7 @@
 #include "graphics.h"
 #include "dynamic_placeholder_text_util.h"
 #include "constants/songs.h"
+#include "text.h"
 
 #define TAG_CURSOR 0x8000
 
@@ -38,6 +39,7 @@ static const u8 sWindowVerticalScrollSpeeds[] = {
     [OPTIONS_TEXT_SPEED_SLOW] = 1,
     [OPTIONS_TEXT_SPEED_MID] = 2,
     [OPTIONS_TEXT_SPEED_FAST] = 4,
+    [OPTIONS_TEXT_SPEED_INSTANT] = 4,
 };
 
 static const struct GlyphWidthFunc sGlyphWidthFuncs[] = {
@@ -460,7 +462,7 @@ void TextPrinterInitDownArrowCounters(struct TextPrinter *textPrinter)
 {
     struct TextPrinterSubStruct *subStruct = &textPrinter->subUnion.sub;
 
-    if (gTextFlags.autoScroll == 1)
+    if (gTextFlags.autoScroll == 1 && textPrinter->textSpeed != TEXT_SKIP_DRAW)
         subStruct->autoScrollDelay = 0;
     else
     {
@@ -474,7 +476,7 @@ void TextPrinterDrawDownArrow(struct TextPrinter *textPrinter)
     struct TextPrinterSubStruct *subStruct = &textPrinter->subUnion.sub;
     const u8 *arrowTiles;
 
-    if (gTextFlags.autoScroll == 0)
+    if (gTextFlags.autoScroll == 0 || textPrinter->textSpeed == TEXT_SKIP_DRAW)
     {
         if (subStruct->downArrowDelay != 0)
         {
@@ -551,7 +553,7 @@ bool8 TextPrinterWaitAutoMode(struct TextPrinter *textPrinter)
 bool16 TextPrinterWaitWithDownArrow(struct TextPrinter *textPrinter)
 {
     bool8 result = FALSE;
-    if (gTextFlags.autoScroll != 0)
+    if (gTextFlags.autoScroll != 0 && textPrinter->textSpeed != TEXT_SKIP_DRAW)
     {
         result = TextPrinterWaitAutoMode(textPrinter);
     }
@@ -570,7 +572,7 @@ bool16 TextPrinterWaitWithDownArrow(struct TextPrinter *textPrinter)
 bool16 TextPrinterWait(struct TextPrinter *textPrinter)
 {
     bool16 result = FALSE;
-    if (gTextFlags.autoScroll != 0)
+    if (gTextFlags.autoScroll != 0 && textPrinter->textSpeed != TEXT_SKIP_DRAW)
     {
         result = TextPrinterWaitAutoMode(textPrinter);
     }

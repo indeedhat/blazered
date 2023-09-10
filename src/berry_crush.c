@@ -30,6 +30,7 @@
 #include "trig.h"
 #include "constants/songs.h"
 #include "constants/items.h"
+#include "text.h"
 
 #define MAX_TIME (10 * 60 * 60) // Timer can go up to 9:59:59
 
@@ -1145,6 +1146,9 @@ static void SetNamesAndTextSpeed(struct BerryCrushGame *game)
         break;
     case OPTIONS_TEXT_SPEED_FAST:
         game->textSpeed = 1;
+        break;
+    case OPTIONS_TEXT_SPEED_INSTANT:
+        game->textSpeed = TEXT_SKIP_DRAW;
         break;
     }
 }
